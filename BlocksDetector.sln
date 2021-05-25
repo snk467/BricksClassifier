@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31112.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BlocksDetector", "BlocksDetector.vcxproj", "{B6BC56DF-4ED5-4700-8045-0827310C25AB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B6BC56DF-4ED5-4700-8045-0827310C25AB}.Debug|x64.ActiveCfg = Debug|x64
+		{B6BC56DF-4ED5-4700-8045-0827310C25AB}.Debug|x64.Build.0 = Debug|x64
+		{B6BC56DF-4ED5-4700-8045-0827310C25AB}.Debug|x86.ActiveCfg = Debug|Win32
+		{B6BC56DF-4ED5-4700-8045-0827310C25AB}.Debug|x86.Build.0 = Debug|Win32
+		{B6BC56DF-4ED5-4700-8045-0827310C25AB}.Release|x64.ActiveCfg = Release|x64
+		{B6BC56DF-4ED5-4700-8045-0827310C25AB}.Release|x64.Build.0 = Release|x64
+		{B6BC56DF-4ED5-4700-8045-0827310C25AB}.Release|x86.ActiveCfg = Release|Win32
+		{B6BC56DF-4ED5-4700-8045-0827310C25AB}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F8EFBAE9-83DC-4E61-8EDA-C06E4DF43B13}
+	EndGlobalSection
+EndGlobal
