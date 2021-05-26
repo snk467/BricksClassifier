@@ -1,6 +1,5 @@
 ﻿#include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
-#include <iostream>
 #include <io.h>
 #include <fcntl.h>
 
@@ -8,6 +7,49 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "Args.h"
 #include "FileSystemHelper.h"
+#include "Converter.h"
+#include "Filter.h"
+
+
+void showImage(cv::Mat image, std::string title)
+{
+    cv::resize(image, image, cv::Size(image.cols, image.rows));
+    cv::imshow(title, image); 
+}
+
+cv::Mat hsvThreshold(cv::Mat source)
+{
+    cv::Mat_<cv::Vec3b> outImage = source.clone();
+    cv::Mat_<cv::Vec3b> image;
+    cv::cvtColor(source, image, cv::COLOR_BGR2HSV);
+
+    // H - 0-179
+    // S - 0-255
+
+    int lowH = 0; //0
+    int highH = 15; //15 -- hist 25/27
+    int lowS = 95;//95 --hist 55
+    int highS = 230;//230
+    int highV = 210;//190
+
+    for (int x = 0; x < image.cols; x++)
+    {
+        for (int y = 0; y < image.rows; y++)
+        {
+            if (image(y,x)[1] >= lowS && image(y, x)[1] <= highS && image(y, x)[0] >= lowH && image(y, x)[0] <= highH /*&& image(y,x)[2] < highV*/)
+            {
+                outImage(y, x)[0] = outImage(y, x)[1] = outImage(y, x)[2] = 255;
+            }
+            else
+            {
+                outImage(y, x)[0] = outImage(y, x)[1] = outImage(y,x)[2] = 0;
+            }
+        }
+    }
+
+    return outImage;
+}
+
 
 
 
@@ -20,8 +62,27 @@ int main(int, char* [])
 
     for (int i = 0; i < images.size(); i++)
     {
-        std::vector<cv::Mat> image = images[i];
-    }
+        cv::Mat image = images[i];
+        cv::Mat image1;
+        image1 = Filter::rankFilter(image, 3, 2);
 
+        //std::vector<cv::Mat> bgr = std::vector<cv::Mat>();   //destination array
+        //split(image1, bgr);//split source
+        //cv::equalizeHist(bgr[0], bgr[0]);
+        //cv::equalizeHist(bgr[1], bgr[1]);
+        //cv::equalizeHist(bgr[2], bgr[2]);
+        //cv::Mat eqHistImage;
+        //cv::merge(bgr, eqHistImage);
+
+        showImage(image1, "rank" + std::to_string(i));
+        cv::imwrite("rank" + std::to_string(i) + ".jpg", image1);
+        cv::Mat image2 = hsvThreshold(image1);
+
+        showImage(image2, std::to_string(i));
+        cv::imwrite("out" + std::to_string(i) + ".jpg", image2);
+    }
+    
+
+    cv::waitKey(-1);
     return 0;
 }
