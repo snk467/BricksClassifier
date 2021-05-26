@@ -28,7 +28,7 @@ cv::Mat hsvThreshold(cv::Mat source)
 
     int lowH = 0; //0
     int highH = 15; //15 -- hist 25/27
-    int lowS = 95;//95 --hist 55
+    int lowS = 106;//95 --hist 55 #new 107
     int highS = 230;//230
     int highV = 210;//190
 
@@ -63,23 +63,14 @@ int main(int, char* [])
     for (int i = 0; i < images.size(); i++)
     {
         cv::Mat image = images[i];
-        cv::Mat image1;
-        image1 = Filter::rankFilter(image, 3, 2);
 
-        //std::vector<cv::Mat> bgr = std::vector<cv::Mat>();   //destination array
-        //split(image1, bgr);//split source
-        //cv::equalizeHist(bgr[0], bgr[0]);
-        //cv::equalizeHist(bgr[1], bgr[1]);
-        //cv::equalizeHist(bgr[2], bgr[2]);
-        //cv::Mat eqHistImage;
-        //cv::merge(bgr, eqHistImage);
+        image = Filter::rankFilter(image, 3, 2);
+        showImage(image, "rank" + std::to_string(i));
+        cv::imwrite("rank" + std::to_string(i) + ".jpg", image);
 
-        showImage(image1, "rank" + std::to_string(i));
-        cv::imwrite("rank" + std::to_string(i) + ".jpg", image1);
-        cv::Mat image2 = hsvThreshold(image1);
-
-        showImage(image2, std::to_string(i));
-        cv::imwrite("out" + std::to_string(i) + ".jpg", image2);
+        image = hsvThreshold(image);
+        showImage(image, std::to_string(i));
+        cv::imwrite("out" + std::to_string(i) + ".jpg", image);
     }
     
 
