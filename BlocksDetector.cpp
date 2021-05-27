@@ -12,6 +12,8 @@
 #include <stack>
 
 
+
+
 void showImage(cv::Mat image, std::string title)
 {
     int cols = image.cols;
@@ -27,7 +29,7 @@ void showImage(cv::Mat image, std::string title)
 
 static cv::Vec3b randomColor()
 {
-    cv::RNG rng(12345);
+    static cv::RNG rng(12345);
     return cv::Vec3b((uchar)rng.uniform(0, 255), (uchar)rng.uniform(0, 255), (uchar)rng.uniform(0, 255));
 }
 
@@ -59,7 +61,12 @@ cv::Mat threshold(cv::Mat source)
     return outImage;
 }
 
-void floodFill(cv::Mat_<cv::Vec3b>& image, cv::Mat_<uchar>& mask, cv::Vec3b color, cv::Point2i seed, int threshold, bool eightConnected = true)
+bool isInRange(int value, int low, int high)
+{
+    return low <= value && value <= high;
+}
+
+void floodFill(cv::Mat3b& destination, cv::Mat3b& sourceHLS, cv::Mat1b& mask, cv::Vec3b color, cv::Point2i seed, int lowThreshold = 30, int highThreshold = 10, bool eightConnected = false)
 {
     uchar done = 0;
     std::stack<cv::Point2i> stack = std::stack<cv::Point2i>();
@@ -73,15 +80,47 @@ void floodFill(cv::Mat_<cv::Vec3b>& image, cv::Mat_<uchar>& mask, cv::Vec3b colo
         stack.push(seed);
     }    
 
+
+    int channel = 2;
+    int value = sourceHLS(seed)[channel];
+    int low = value - lowThreshold;
+    int high = value + highThreshold;
+
     while (!stack.empty())
     {
         cv::Point2i currentPixel = stack.top();
         stack.pop();
 
-        image(currentPixel) = color;
+        destination(currentPixel) = color;
         mask(currentPixel) = done;
 
-        if (true)
+        int x = currentPixel.x;
+        int y = currentPixel.y;
+
+
+        cv::Point2i p = cv::Point2i(x, y - 1);
+        if (p.y >= 0 && mask(p) != done && isInRange(sourceHLS(p)[channel], low, high))
+        {
+            stack.push(p);
+        }
+        p = cv::Point2i(x, y + 1);
+        if (p.y < mask.rows && mask(p) != done && isInRange(sourceHLS(p)[channel], low, high))
+        {
+            stack.push(p);
+        }
+        p = cv::Point2i(x - 1, y);
+        if (p.x >= 0 && mask(p) != done && isInRange(sourceHLS(p)[channel], low, high))
+        {
+            stack.push(p);
+        }
+        p = cv::Point2i(x + 1, y);
+        if (p.x < mask.cols && mask(p) != done && isInRange(sourceHLS(p)[channel], low, high))
+        {
+            stack.push(p);
+        }
+
+
+        if (eightConnected)
         {
             
         }
@@ -99,22 +138,55 @@ int main(int, char* [])
 
     std::vector<cv::Mat> images = FileSystemHelper::loadImages(Args::dataDir);
 
-    for (int i = 0; i < images.size(); i++)
+    for (int i = 0; i < 1/*images.size()*/; i++)
     {
-        cv::Mat image = images[i];
+        cv::Mat3b image = images[i];
 
         image = Filter::rankFilter(image, 3, 5);
-        showImage(image, "rank" + std::to_string(i));
+        //showImage(image, "rank" + std::to_string(i));
+
+
+
+
+
+
+
+
+
+
+
+
+
         cv::imwrite("rank" + std::to_string(i) + ".jpg", image);
 
-        image = threshold(image);
 
-        cv::dilate(image, image, cv::Mat());
-        cv::dilate(image, image, cv::Mat());
-        cv::erode(image, image, cv::Mat());
 
-        showImage(image, "out" + std::to_string(i));
-        cv::imwrite("out" + std::to_string(i) + ".jpg", image);
+
+
+
+
+
+        cv::Mat1b mask = threshold(image);
+
+        cv::dilate(mask, mask, cv::Mat());
+        cv::dilate(mask, mask, cv::Mat());
+        cv::erode(mask, mask, cv::Mat());
+
+        cv::Mat1b tmpMask = mask.clone();
+        cv::Mat3b destination = cv::Mat3b::zeros(image.rows, image.cols);
+        cv::cvtColor(image, image, cv::COLOR_BGR2HSV);
+        for (int x = 0; x < image.cols; x++)
+        {
+            for (int y = 0; y < image.rows; y++)
+            {
+                floodFill(destination, image, tmpMask, randomColor(), cv::Point2i(x, y));
+            }
+        }
+
+        //showImage(tmpMask, "tmpMask" + std::to_string(i));
+        showImage(mask, "mask" + std::to_string(i));
+        showImage(destination, "out" + std::to_string(i));
+        cv::imwrite("out" + std::to_string(i) + ".jpg", destination);
     }
     
 
