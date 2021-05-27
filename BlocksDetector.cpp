@@ -66,7 +66,7 @@ bool isInRange(int value, int low, int high)
     return low <= value && value <= high;
 }
 
-void floodFill(cv::Mat3b& destination, cv::Mat3b& sourceHLS, cv::Mat1b& mask, cv::Vec3b color, cv::Point2i seed, int lowThreshold = 30, int highThreshold = 10, bool eightConnected = false)
+void floodFill(cv::Mat3b& destination, cv::Mat3b& sourceHLS, cv::Mat1b& mask, cv::Vec3b color, cv::Point2i seed, int lowThreshold = 70, int highThreshold = 50, bool eightConnected = false) //high 50 jest ok, low 35 jest okej
 {
     uchar done = 0;
     std::stack<cv::Point2i> stack = std::stack<cv::Point2i>();
@@ -131,6 +131,39 @@ void floodFill(cv::Mat3b& destination, cv::Mat3b& sourceHLS, cv::Mat1b& mask, cv
 
 }
 
+void hist()
+{
+    cv::Mat image;
+    std::vector<cv::Mat> rgb;
+
+
+    cv::split(image, rgb);
+
+    cv::equalizeHist(rgb[0], rgb[0]);
+    cv::equalizeHist(rgb[1], rgb[1]);
+    cv::equalizeHist(rgb[2], rgb[2]);
+
+    cv::merge(rgb, image);
+}
+
+void colorReduce(cv::Mat& image, int div = 64)
+{
+    int nl = image.rows;                    // number of lines
+    int nc = image.cols * image.channels(); // number of elements per line
+
+    for (int j = 0; j < nl; j++)
+    {
+        // get the address of row j
+        uchar* data = image.ptr<uchar>(j);
+
+        for (int i = 0; i < nc; i++)
+        {
+            // process each pixel
+            data[i] = data[i] / div * div + div / 2;
+        }
+    }
+}
+
 int main(int, char* []) 
 {
     (void)_setmode(_fileno(stdout), _O_U16TEXT);
@@ -138,42 +171,66 @@ int main(int, char* [])
 
     std::vector<cv::Mat> images = FileSystemHelper::loadImages(Args::dataDir);
 
-    for (int i = 0; i < 1/*images.size()*/; i++)
+    for (int i = 0; i < images.size(); i++)
     {
         cv::Mat3b image = images[i];
 
         image = Filter::rankFilter(image, 3, 5);
         //showImage(image, "rank" + std::to_string(i));
-
-
-
-
-
-
-
-
-
-
-
-
-
         cv::imwrite("rank" + std::to_string(i) + ".jpg", image);
 
+        //cv::Mat grad;
+        //cv::Mat grayImage;
+        //int ksize = 3;
+        //int scale = 1;
+        //int delta = 1;
+        //int ddepth = CV_16S;
 
 
 
+        //cv::cvtColor(image, grayImage, cv::COLOR_BGR2GRAY);
+        //cv::Mat grad_x, grad_y;
+        //cv::Mat abs_grad_x, abs_grad_y;
+        //cv::Sobel(grayImage, grad_x, ddepth, 1, 0, ksize, scale, delta, cv::BORDER_DEFAULT);
+        //cv::Sobel(grayImage, grad_y, ddepth, 0, 1, ksize, scale, delta, cv::BORDER_DEFAULT);
+        //// converting back to CV_8U
+        //cv::convertScaleAbs(grad_x, abs_grad_x);
+        //cv::convertScaleAbs(grad_y, abs_grad_y);
+        //cv::addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
+        ////showImage(grad, "sobel" + std::to_string(i));
+        //cv::Mat sobelImage;
+
+        //cv::cvtColor(grad, sobelImage, cv::COLOR_GRAY2BGR);
+
+        //cv::addWeighted(image, 1.0, sobelImage, -0.5, 0, image);
 
 
+        ////showImage(image, "rankSobel" + std::to_string(i));
+        //cv::imwrite("rankSobel" + std::to_string(i) + ".jpg", image);
 
 
-        cv::Mat1b mask = threshold(image);
+        /*Progowanie*/
+
+        cv::Mat1b mask = threshold(image); 
+        //showImage(mask, "premask" + std::to_string(i));
+        //cv::imwrite("premask" + std::to_string(i) + ".jpg", mask);
+
+        /*Dylacja i erozja*/
 
         cv::dilate(mask, mask, cv::Mat());
         cv::dilate(mask, mask, cv::Mat());
         cv::erode(mask, mask, cv::Mat());
+        //cv::erode(mask, mask, cv::Mat());
+
+        //showImage(mask, "mask" + std::to_string(i));
+        cv::imwrite("mask" + std::to_string(i) + ".jpg", mask);
+
+
+        /*Segmentacja*/
 
         cv::Mat1b tmpMask = mask.clone();
         cv::Mat3b destination = cv::Mat3b::zeros(image.rows, image.cols);
+        colorReduce(image, 110); //128 było zadowalające
         cv::cvtColor(image, image, cv::COLOR_BGR2HSV);
         for (int x = 0; x < image.cols; x++)
         {
@@ -182,9 +239,11 @@ int main(int, char* [])
                 floodFill(destination, image, tmpMask, randomColor(), cv::Point2i(x, y));
             }
         }
-
         //showImage(tmpMask, "tmpMask" + std::to_string(i));
-        showImage(mask, "mask" + std::to_string(i));
+
+
+        /*Prezentacja wyniku*/
+
         showImage(destination, "out" + std::to_string(i));
         cv::imwrite("out" + std::to_string(i) + ".jpg", destination);
     }
