@@ -21,7 +21,7 @@ void IOHelper::outputImage(cv::Mat image, std::string title, bool show, bool sav
 {
     if (save)
     {
-        cv::imwrite(title + ".jpg", image);
+        cv::imwrite(title + ".png", image);
     }
     if (show)
     {

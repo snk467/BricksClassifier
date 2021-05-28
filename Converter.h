@@ -3,9 +3,9 @@
 
 class Converter
 {
-	cv::Mat mImage;
 public:
-	Converter(cv::Mat image);
-	cv::Mat_<uchar> toGray();
+	static void bgrToGray(cv::Mat source, cv::Mat1b& destination);
+private:
+	Converter();
 };
 

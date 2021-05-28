@@ -148,15 +148,18 @@
     <ClCompile Include="Args.cpp" />
     <ClCompile Include="BlocksDetector.cpp" />
     <ClCompile Include="Converter.cpp" />
+    <ClCompile Include="ImageProcessor.cpp" />
     <ClCompile Include="IOHelper.cpp" />
-    <ClCompile Include="Filter.cpp" />
+    <ClCompile Include="Segment.cpp" />
+    <ClCompile Include="SegmentMap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Args.h" />
     <ClInclude Include="Converter.h" />
     <ClInclude Include="IOHelper.h" />
-    <ClInclude Include="Filter.h" />
     <ClInclude Include="ImageProcessor.h" />
+    <ClInclude Include="Segment.h" />
+    <ClInclude Include="SegmentMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

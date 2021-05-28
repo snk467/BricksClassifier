@@ -1,14 +1,9 @@
 #include "Converter.h"
 
-Converter::Converter(cv::Mat image)
+void Converter::bgrToGray(cv::Mat source, cv::Mat1b& destination)
 {
-	mImage = image.clone();
-}
-
-cv::Mat_<uchar> Converter::toGray()
-{
-	cv::Mat_<cv::Vec3b> image = mImage.clone();
-	cv::Mat_<uchar> grayImage = cv::Mat_<uchar>(mImage.rows, mImage.cols);
+	const cv::Mat_<cv::Vec3b> image = source;
+	cv::Mat_<uchar> grayImage = cv::Mat_<uchar>(image.rows, image.cols);
 
 	for (int x = 0; x < image.cols; x++)
 	{
@@ -25,5 +20,5 @@ cv::Mat_<uchar> Converter::toGray()
 		}
 	}
 
-	return grayImage;
+	destination = grayImage;
 }
