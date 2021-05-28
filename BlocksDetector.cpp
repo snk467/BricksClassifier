@@ -230,7 +230,7 @@ int main(int, char* [])
 
         cv::Mat1b tmpMask = mask.clone();
         cv::Mat3b destination = cv::Mat3b::zeros(image.rows, image.cols);
-        colorReduce(image, 110); //128 było zadowalające
+        colorReduce(image, 110); //110 było zadowalające
         cv::cvtColor(image, image, cv::COLOR_BGR2HSV);
         for (int x = 0; x < image.cols; x++)
         {
