@@ -148,13 +148,13 @@
     <ClCompile Include="Args.cpp" />
     <ClCompile Include="BlocksDetector.cpp" />
     <ClCompile Include="Converter.cpp" />
-    <ClCompile Include="FileSystemHelper.cpp" />
+    <ClCompile Include="IOHelper.cpp" />
     <ClCompile Include="Filter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Args.h" />
     <ClInclude Include="Converter.h" />
-    <ClInclude Include="FileSystemHelper.h" />
+    <ClInclude Include="IOHelper.h" />
     <ClInclude Include="Filter.h" />
     <ClInclude Include="ImageProcessor.h" />
   </ItemGroup>

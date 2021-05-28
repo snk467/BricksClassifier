@@ -6,26 +6,10 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "Args.h"
-#include "FileSystemHelper.h"
+#include "IOHelper.h"
 #include "Converter.h"
 #include "Filter.h"
 #include <stack>
-
-
-
-
-void showImage(cv::Mat image, std::string title)
-{
-    int cols = image.cols;
-    int rows = image.rows;
-    while (rows > 800)
-    {
-        rows /= 2;
-        cols /= 2;
-    }
-    cv::resize(image, image, cv::Size(cols, rows));
-    cv::imshow(title, image); 
-}
 
 static cv::Vec3b randomColor()
 {
@@ -169,68 +153,34 @@ int main(int, char* [])
     (void)_setmode(_fileno(stdout), _O_U16TEXT);
     std::wcout << L"BlocksDetector, POBR project, Sławomir Nikiel" << std::endl << std::endl;
 
-    std::vector<cv::Mat> images = FileSystemHelper::loadImages(Args::dataDir);
+    std::vector<cv::Mat> images = IOHelper::loadImages(Args::dataDir);
 
     for (int i = 0; i < images.size(); i++)
     {
         cv::Mat3b image = images[i];
 
+        /*Filtracja rankingowa*/
+
         image = Filter::rankFilter(image, 3, 5);
-        //showImage(image, "rank" + std::to_string(i));
-        cv::imwrite("rank" + std::to_string(i) + ".jpg", image);
-
-        //cv::Mat grad;
-        //cv::Mat grayImage;
-        //int ksize = 3;
-        //int scale = 1;
-        //int delta = 1;
-        //int ddepth = CV_16S;
-
-
-
-        //cv::cvtColor(image, grayImage, cv::COLOR_BGR2GRAY);
-        //cv::Mat grad_x, grad_y;
-        //cv::Mat abs_grad_x, abs_grad_y;
-        //cv::Sobel(grayImage, grad_x, ddepth, 1, 0, ksize, scale, delta, cv::BORDER_DEFAULT);
-        //cv::Sobel(grayImage, grad_y, ddepth, 0, 1, ksize, scale, delta, cv::BORDER_DEFAULT);
-        //// converting back to CV_8U
-        //cv::convertScaleAbs(grad_x, abs_grad_x);
-        //cv::convertScaleAbs(grad_y, abs_grad_y);
-        //cv::addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, grad);
-        ////showImage(grad, "sobel" + std::to_string(i));
-        //cv::Mat sobelImage;
-
-        //cv::cvtColor(grad, sobelImage, cv::COLOR_GRAY2BGR);
-
-        //cv::addWeighted(image, 1.0, sobelImage, -0.5, 0, image);
-
-
-        ////showImage(image, "rankSobel" + std::to_string(i));
-        //cv::imwrite("rankSobel" + std::to_string(i) + ".jpg", image);
-
+        IOHelper::outputImage(image, "rank" + std::to_string(i));
 
         /*Progowanie*/
 
         cv::Mat1b mask = threshold(image); 
-        //showImage(mask, "premask" + std::to_string(i));
-        //cv::imwrite("premask" + std::to_string(i) + ".jpg", mask);
+        IOHelper::outputImage(mask, "threshold" + std::to_string(i));
 
         /*Dylacja i erozja*/
 
         cv::dilate(mask, mask, cv::Mat());
         cv::dilate(mask, mask, cv::Mat());
         cv::erode(mask, mask, cv::Mat());
-        //cv::erode(mask, mask, cv::Mat());
+        IOHelper::outputImage(mask, "mask" + std::to_string(i));
 
-        //showImage(mask, "mask" + std::to_string(i));
-        cv::imwrite("mask" + std::to_string(i) + ".jpg", mask);
-
-
-        /*Segmentacja*/
+        /*Generowanie mapy segmentów*/
 
         cv::Mat1b tmpMask = mask.clone();
         cv::Mat3b destination = cv::Mat3b::zeros(image.rows, image.cols);
-        colorReduce(image, 110); //110 było zadowalające
+        colorReduce(image, 110);
         cv::cvtColor(image, image, cv::COLOR_BGR2HSV);
         for (int x = 0; x < image.cols; x++)
         {
@@ -239,13 +189,8 @@ int main(int, char* [])
                 floodFill(destination, image, tmpMask, randomColor(), cv::Point2i(x, y));
             }
         }
-        //showImage(tmpMask, "tmpMask" + std::to_string(i));
 
-
-        /*Prezentacja wyniku*/
-
-        showImage(destination, "out" + std::to_string(i));
-        cv::imwrite("out" + std::to_string(i) + ".jpg", destination);
+        IOHelper::outputImage(destination, "out" + std::to_string(i), true);
     }
     
 

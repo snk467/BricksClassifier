@@ -27,7 +27,7 @@
     <ClCompile Include="Args.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="FileSystemHelper.cpp">
+    <ClCompile Include="IOHelper.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
     <ClCompile Include="Converter.cpp">
@@ -41,7 +41,7 @@
     <ClInclude Include="Args.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FileSystemHelper.h">
+    <ClInclude Include="IOHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ImageProcessor.h">
