@@ -19,14 +19,29 @@ cv::Vec3b SegmentMap::uniqueRandomColor()
 	return color;
 }
 
-cv::Vec3b& SegmentMap::operator()(cv::Point2i p)
+void SegmentMap::setMap(cv::Point2i p, cv::Vec3b color)
 {
-	return mMap(p);
+	if (std::find(mUsedColors.begin(), mUsedColors.end(), color) == mUsedColors.end())
+	{
+		mUsedColors.push_back(color);
+	}
+
+	mMap(p) = color;
+
+	if (!mSegments.empty())
+	{
+		mSegments.back().addPoint(p);
+	}
 }
 
-std::vector<Segment> SegmentMap::generateSegments()
+void SegmentMap::newSegment()
 {
-	return std::vector<Segment>();
+	mSegments.push_back(Segment());
+}
+
+std::vector<Segment> SegmentMap::getSegments()
+{
+	return mSegments;
 }
 
 cv::Mat3b SegmentMap::getMap()

@@ -27,17 +27,19 @@ int main(int, char* [])
 
     for (int i = 0; i < images.size(); i++)
     {
-        cv::Mat3b image = images[i];
+        cv::Mat3b source = images[i];
+
 
         /*Filtracja rankingowa*/
 
-        ImageProcessor::rankFilter(image, image, 3, 5);
-        IOHelper::outputImage(image, "rank" + std::to_string(i));
+        cv::Mat filteredImage;
+        ImageProcessor::rankFilter(source, filteredImage, 3, 5);
+        IOHelper::outputImage(filteredImage, "rank" + std::to_string(i));
 
         /*Progowanie*/
 
         cv::Mat1b mask;
-        ImageProcessor::threshold(image, mask);
+        ImageProcessor::threshold(filteredImage, mask);
         IOHelper::outputImage(mask, "threshold" + std::to_string(i));
 
         /*Dylacja i erozja*/
@@ -50,8 +52,19 @@ int main(int, char* [])
         /*Generowanie mapy segmentów*/
 
         SegmentMap segmentMap;
-        ImageProcessor::generateSegmentMap(image, segmentMap, mask);
-        IOHelper::outputImage(segmentMap.getMap(), "out" + std::to_string(i), true);
+        ImageProcessor::generateSegmentMap(filteredImage, segmentMap, mask);
+        IOHelper::outputImage(segmentMap.getMap(), "segmentMap" + std::to_string(i));
+
+        /*Rysowanie bounding boxów*/
+
+        std::vector<Segment> segments = segmentMap.getSegments();
+
+        for (auto& segment : segments)
+        {
+            segment.drawBox(source);
+        }
+
+        IOHelper::outputImage(source, "out" + std::to_string(i), true);
     }
     
 

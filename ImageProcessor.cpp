@@ -70,13 +70,14 @@ void ImageProcessor::floodFill(cv::Mat3b source, SegmentMap& destination, cv::Ma
     int value = source(seed)[channel];
     int low = value - lowThreshold;
     int high = value + highThreshold;
+    destination.newSegment();
 
     while (!stack.empty())
     {
         cv::Point2i currentPixel = stack.top();
         stack.pop();
 
-        destination(currentPixel) = color;
+        destination.setMap(currentPixel, color);
         mask(currentPixel) = done;
 
         int x = currentPixel.x;
