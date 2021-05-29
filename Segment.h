@@ -3,10 +3,12 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include <limits>
+#include <iostream>
+
 
 class Segment
 {
-	std::vector<cv::Point2i> mPoints;
+
 	bool mGeometricMomentsUpToDate = false;
 
 	float mXCenter;
@@ -20,9 +22,6 @@ class Segment
 	float M_21;
 	float M_30;
 
-	float m(int p, int q);
-	float M(int p, int q);
-
 	float M1();
 	float M2();
 	float M3();
@@ -33,10 +32,20 @@ class Segment
 	float M8();
 	float M9();
 	float M10();
-public:
 
+	float m(int p, int q);
+	float M(int p, int q);
+
+
+public:
+	std::vector<cv::Point2i> mPoints;
+	Segment();
+	enum class Label { five, unknown };
+	Segment::Label whoAmI();
 	void addPoint(cv::Point2i p);
-	void calculateGeometricMoments();
+	void calculateGeometricMoments(bool verbose = false);
 	void drawBox(cv::Mat& image);
+	float area();
+
 };
 

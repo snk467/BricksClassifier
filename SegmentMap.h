@@ -16,9 +16,9 @@ public:
 	SegmentMap() {}
 	SegmentMap(int cols, int rows);
 	cv::Vec3b uniqueRandomColor();
-	std::vector<Segment> getSegments();
 	cv::Mat3b getMap();
 	void setMap(cv::Point2i p, cv::Vec3b color);
 	void newSegment();
+	std::vector<Segment> getSegments(bool filterSmall = true);
 };
 

@@ -62,6 +62,7 @@ void ImageProcessor::floodFill(cv::Mat3b source, SegmentMap& destination, cv::Ma
     else
     {
         stack.push(seed);
+        mask(seed) = done;
     }
 
 
@@ -77,7 +78,6 @@ void ImageProcessor::floodFill(cv::Mat3b source, SegmentMap& destination, cv::Ma
         stack.pop();
 
         destination.setMap(currentPixel, color);
-        mask(currentPixel) = done;
 
         int x = currentPixel.x;
         int y = currentPixel.y;
@@ -87,21 +87,25 @@ void ImageProcessor::floodFill(cv::Mat3b source, SegmentMap& destination, cv::Ma
         if (p.y >= 0 && mask(p) != done && isInRange(source(p)[channel], low, high))
         {
             stack.push(p);
+            mask(p) = done;
         }
         p = cv::Point2i(x, y + 1);
         if (p.y < mask.rows && mask(p) != done && isInRange(source(p)[channel], low, high))
         {
             stack.push(p);
+            mask(p) = done;
         }
         p = cv::Point2i(x - 1, y);
         if (p.x >= 0 && mask(p) != done && isInRange(source(p)[channel], low, high))
         {
             stack.push(p);
+            mask(p) = done;
         }
         p = cv::Point2i(x + 1, y);
         if (p.x < mask.cols && mask(p) != done && isInRange(source(p)[channel], low, high))
         {
             stack.push(p);
+            mask(p) = done;
         }
 
 

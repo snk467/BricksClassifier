@@ -26,10 +26,10 @@ void SegmentMap::setMap(cv::Point2i p, cv::Vec3b color)
 		mUsedColors.push_back(color);
 	}
 
-	mMap(p) = color;
 
 	if (!mSegments.empty())
 	{
+		mMap(p) = color;
 		mSegments.back().addPoint(p);
 	}
 }
@@ -39,8 +39,22 @@ void SegmentMap::newSegment()
 	mSegments.push_back(Segment());
 }
 
-std::vector<Segment> SegmentMap::getSegments()
+std::vector<Segment> SegmentMap::getSegments(bool filterSmall)
 {
+	if (filterSmall)
+	{
+		std::vector<Segment> filteredSegments;
+		for (auto& segment : mSegments)
+		{
+			if (segment.area() > 300)
+			{
+				filteredSegments.push_back(segment);
+			}
+		}
+
+		return filteredSegments;
+	}
+
 	return mSegments;
 }
 

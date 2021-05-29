@@ -1,12 +1,26 @@
 #include "Segment.h"
 
+Segment::Segment()
+{
+	mXCenter = std::numeric_limits<float>::max();
+	mYCenter = std::numeric_limits<float>::max();
+	m_00 = std::numeric_limits<float>::max();
+	M_02 = std::numeric_limits<float>::max();
+	M_03 = std::numeric_limits<float>::max();
+	M_11 = std::numeric_limits<float>::max();
+	M_12 = std::numeric_limits<float>::max();
+	M_20 = std::numeric_limits<float>::max();
+	M_21 = std::numeric_limits<float>::max();
+	M_30 = std::numeric_limits<float>::max();
+}
+
 void Segment::addPoint(cv::Point2i p)
 {
 	mPoints.push_back(p);
 	mGeometricMomentsUpToDate = false;
 }
 
-void Segment::calculateGeometricMoments()
+void Segment::calculateGeometricMoments(bool verbose)
 {
 	mXCenter = m(1, 0) / m(0, 0);
 	mYCenter = m(0, 1) / m(0, 0);
@@ -32,6 +46,22 @@ void Segment::calculateGeometricMoments()
 	(void)M10();
 
 	mGeometricMomentsUpToDate = true;
+
+	if (verbose)
+	{		
+		std::wcout << "area: " << area() << std::endl;
+		std::wcout << "m_00: " << m_00 << std::endl;
+		std::wcout << "M1: " << M1() << std::endl;
+		std::wcout << "M2: " << M2() << std::endl;
+		std::wcout << "M3: " << M3() << std::endl;
+		std::wcout << "M4: " << M4() << std::endl;
+		std::wcout << "M5: " << M5() << std::endl;
+		std::wcout << "M6: " << M6() << std::endl;
+		std::wcout << "M7: " << M7() << std::endl;
+		std::wcout << "M8: " << M8() << std::endl;
+		std::wcout << "M9: " << M9() << std::endl;
+		std::wcout << "M10: " << M10() << std::endl;
+	}
 }
 
 void Segment::drawBox(cv::Mat& image)
@@ -70,6 +100,11 @@ void Segment::drawBox(cv::Mat& image)
 	cv::rectangle(image, topLeft, bottomRight, color, 2);
 }
 
+float Segment::area()
+{
+	return mPoints.size();
+}
+
 float Segment::m(int p, int q)
 {
 	float m = 0.0f;
@@ -94,6 +129,18 @@ float Segment::M(int p, int q)
 	return M;
 }
 
+
+Segment::Label Segment::whoAmI()
+{
+	// 5
+	if (0.5f <= M1() && M1() <= 0.7f && 0.04f <= M2() && M2() <= 0.11f && 0.01f <= M7() && M7() <= 0.1f)
+	{
+		return Label::five;
+	}
+
+	return Label::unknown;
+}
+
 float Segment::M1()
 {
 	static float value;
@@ -102,7 +149,6 @@ float Segment::M1()
 	{
 		value = (M_20 + M_02) / (float)pow(m_00, 2);
 	}
-
 	return value;
 }
 
@@ -113,6 +159,7 @@ float Segment::M2()
 	{
 		value = ((float)pow(M_20 - M_02, 2) + 4.f * (float)pow(M_11, 2)) / (float)pow(m_00, 4);
 	}
+	
 	return value;
 }
 

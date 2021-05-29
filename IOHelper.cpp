@@ -5,8 +5,14 @@ using std::string;
 std::vector<cv::Mat> IOHelper::loadImages(string path)
 {
     std::wcout << "Loading images..." << std::endl;
-    std::vector<cv::String> filesNames;
-    cv::glob(path + "\\*", filesNames, false);
+    std::vector<cv::String> jpgFilesNames;
+    std::vector<cv::String> pngFilesNames;
+    cv::glob(path + "\\*.jpg", jpgFilesNames, false);
+    cv::glob(path + "\\*.png", pngFilesNames, false);
+
+    std::vector<cv::String> filesNames = std::vector<cv::String>(jpgFilesNames);
+    filesNames.insert(filesNames.end(), pngFilesNames.begin(), pngFilesNames.end());
+
     std::vector<cv::Mat> images = std::vector<cv::Mat>();
     for (size_t i = 0; i < filesNames.size(); i++)
     {
