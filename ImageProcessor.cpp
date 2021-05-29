@@ -168,14 +168,57 @@ void ImageProcessor::rankFilter(cv::Mat source, cv::Mat& destination, int N, int
     destination = outImage;
 }
 
-void ImageProcessor::dilate(cv::Mat source, cv::Mat& destination)
+void ImageProcessor::morphologyFilter(cv::Mat1b source, cv::Mat1b& destination, bool dilate = true, cv::Mat1b kernel = cv::Mat())
 {
-    cv::dilate(source, destination, cv::Mat());
+    //cv::dilate(source, destination, cv::Mat());
+
+    if (kernel.empty())
+    {
+        kernel = cv::Mat1b::ones(3, 3);
+    }
+
+    cv::Mat1b image = source.clone();
+    destination = cv::Mat1b::zeros(image.rows, image.cols);
+
+    for (int x = 1; x < image.cols - 1; x++)
+    {
+        for (int y = 1; y < image.rows - 1; y++)
+        {
+            // Lista do przechowywania przetwarzanych pikseli
+            std::vector<uchar> pixelsList = std::vector<uchar>();
+            // Gromadzenie przetwarzanych pikseli
+            for (int i = 0; i < kernel.cols; i++)
+            {
+                for (int j = 0; j < kernel.rows; j++)
+                {
+                    if (kernel(j, i) != 0)
+                    {
+                        pixelsList.push_back(image(y - kernel.rows / 2 + j, x - kernel.cols / 2 + i));
+                    }
+                }
+            }
+
+            if (dilate)
+            {
+                destination(y, x) = *std::max_element(pixelsList.begin(), pixelsList.end());
+            }
+            else
+            {
+                destination(y, x) = *std::min_element(pixelsList.begin(), pixelsList.end());
+            }
+        }
+    }
+
 }
 
-void ImageProcessor::erode(cv::Mat source, cv::Mat& destination)
+void ImageProcessor::dilate(cv::Mat1b source, cv::Mat1b& destination)
 {
-    cv::erode(source, destination, cv::Mat());
+    ImageProcessor::morphologyFilter(source, destination);
+}
+
+void ImageProcessor::erode(cv::Mat1b source, cv::Mat1b& destination)
+{
+    ImageProcessor::morphologyFilter(source, destination, false);
 }
 
 bool ImageProcessor::isInRange(int value, int low, int high)

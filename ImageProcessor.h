@@ -12,9 +12,10 @@ public:
 	static void threshold(cv::Mat source, cv::Mat1b& destination);
 	static void generateSegmentMap(cv::Mat3b source, SegmentMap& destination, cv::Mat1b mask);
 	static void rankFilter(cv::Mat source, cv::Mat& destination, int N, int index);
-	static void dilate(cv::Mat source, cv::Mat& destination);
-	static void erode(cv::Mat source, cv::Mat& destination);
+	static void dilate(cv::Mat1b source, cv::Mat1b& destination);
+	static void erode(cv::Mat1b source, cv::Mat1b& destination);
 private: 
+	static void morphologyFilter(cv::Mat1b source, cv::Mat1b& destination, bool dilate, cv::Mat1b kernel);
 	static bool isInRange(int value, int low, int high);
 	static void floodFill(cv::Mat3b source, SegmentMap& destination, cv::Mat1b& mask,
 						  cv::Vec3b color, cv::Point2i seed, int lowThreshold = 70,
