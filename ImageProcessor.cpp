@@ -28,8 +28,7 @@ void ImageProcessor::threshold(cv::Mat source, cv::Mat1b& destination)
     cv::Mat_<uchar> outImage = cv::Mat::zeros(source.size(), CV_8U);
 
     cv::Mat_<cv::Vec3b> image;
-    cv::cvtColor(source, image, cv::COLOR_BGR2HLS);
-
+    Converter::BGRToHLS(source, image);
     int lowH = 3; //0 -- HSV //3 -- HLS
     int highH = 16; //15 -- HSV //16 -- HLS
     int lowS = 65; //106 -- HSV //65 -- HLS
@@ -118,7 +117,8 @@ void ImageProcessor::generateSegmentMap(cv::Mat3b source, SegmentMap& destinatio
     cv::Mat1b auxMask = mask.clone();
     destination = SegmentMap(source.cols, source.rows);
     ImageProcessor::colorReduce(source, source, 110);
-    cv::cvtColor(source, source, cv::COLOR_BGR2HSV);
+    //cv::cvtColor(source, source, cv::COLOR_BGR2HSV);
+    Converter::BGRToHSV(source, source);
     for (int x = 0; x < source.cols; x++)
     {
         for (int y = 0; y < source.rows; y++)
@@ -138,7 +138,7 @@ void ImageProcessor::rankFilter(cv::Mat source, cv::Mat& destination, int N, int
 
     cv::Mat_<cv::Vec3b> image = source.clone();
     cv::Mat_<uchar> grayImage;
-    Converter::bgrToGray(image, grayImage);
+    Converter::BGRToGray(image, grayImage);
     cv::Mat_<cv::Vec3b> outImage = image.clone();
     for (int x = N / 2; x < image.cols - N / 2; x++)
     {

@@ -12,12 +12,6 @@
 #include "ImageProcessor.h"
 #include <stack>
 
-static cv::Vec3b randomColor()
-{
-    static cv::RNG rng(12345);
-    return cv::Vec3b((uchar)rng.uniform(0, 255), (uchar)rng.uniform(0, 255), (uchar)rng.uniform(0, 255));
-}
-
 int main(int, char* []) 
 {
     (void)_setmode(_fileno(stdout), _O_U16TEXT);
@@ -62,6 +56,7 @@ int main(int, char* [])
         for (auto& segment : segments)
         {
             segment.drawBox(source);
+            segment.calculateGeometricMoments();
         }
 
         IOHelper::outputImage(source, "out" + std::to_string(i), true);
