@@ -89,7 +89,7 @@ int main(int, char* [])
 				segment.calculateGeometricMoments(false);
 				if (segment.whoAmI() != Segment::Label::unknown)
 				{
-					segment.drawBox(source);
+					segment.drawBox(source, "5");
 				}
 
 			}

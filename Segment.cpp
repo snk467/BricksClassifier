@@ -64,7 +64,7 @@ void Segment::calculateGeometricMoments(bool verbose)
 	}
 }
 
-void Segment::drawBox(cv::Mat& image)
+void Segment::drawBox(cv::Mat& image, std::string label)
 {
 
 	int topY = std::numeric_limits<int>::max();
@@ -98,6 +98,18 @@ void Segment::drawBox(cv::Mat& image)
 	cv::Scalar color = cv::Scalar(0, 255, 127, 255);
 
 	cv::rectangle(image, topLeft, bottomRight, color, 2);
+	if (label != "")
+	{
+		int baseline = 0;
+		int thickness = 2;
+		cv::Size size = cv::getTextSize(label, cv::FONT_HERSHEY_SIMPLEX, 1, thickness, &baseline);
+		
+		baseline += thickness;
+
+		cv::Point2i org = cv::Point2i(bottomRight.x, bottomRight.y + size.height);
+
+		cv::putText(image, label, org, cv::FONT_HERSHEY_SIMPLEX, 1, color, thickness);
+	}
 }
 
 float Segment::area()
@@ -133,7 +145,7 @@ float Segment::M(int p, int q)
 Segment::Label Segment::whoAmI()
 {
 	// 5
-	if (0.5f <= M1() && M1() <= 0.7f && 0.04f <= M2() && M2() <= 0.11f && 0.01f <= M7() && M7() <= 0.1f)
+	if (0.39f <= M1() && M1() <= 0.7f && 0.02f <= M2() && M2() <= 0.11f && 0.03f <= M7() && M7() <= 0.095f && M4() <= 0.0042f && M3() <= 0.0071f)
 	{
 		return Label::five;
 	}
