@@ -40,7 +40,7 @@ class Segment
 public:
 	std::vector<cv::Point2i> mPoints;
 	Segment();
-	enum class Label { five, unknown };
+	enum class Label { zero, one, three, four, five, eight, ten, unknown };
 	Segment::Label whoAmI();
 	void addPoint(cv::Point2i p);
 	void calculateGeometricMoments(bool verbose = false);

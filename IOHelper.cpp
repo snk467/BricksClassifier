@@ -1,5 +1,6 @@
 #include "IOHelper.h"
 
+
 using std::string;
 
 std::vector<cv::Mat> IOHelper::loadImages(string path)
@@ -41,4 +42,39 @@ void IOHelper::outputImage(cv::Mat image, std::string title, bool show, bool sav
         cv::resize(image, image, cv::Size(cols, rows));
         cv::imshow(title, image);
     }
+}
+
+std::string IOHelper::mapLabel(Segment::Label label)
+{
+    std::string labelString = "";
+    switch (label)
+    {
+    case Segment::Label::zero:
+        labelString = "0";
+        break;
+    case Segment::Label::one:
+        labelString = "1";
+        break;
+    case Segment::Label::three:
+        labelString = "3";
+        break;
+    case Segment::Label::four:
+        labelString = "4";
+        break;
+    case Segment::Label::five:
+        labelString = "5";
+        break;
+    case Segment::Label::eight:
+        labelString = "8";
+        break;
+    case Segment::Label::ten:
+        labelString = "10";
+        break;
+    case Segment::Label::unknown:
+        break;
+    default:
+        break;
+    }
+
+    return labelString;
 }

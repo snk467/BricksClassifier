@@ -145,7 +145,7 @@ float Segment::M(int p, int q)
 Segment::Label Segment::whoAmI()
 {
 	// 5
-	if (0.39f <= M1() && M1() <= 0.7f && 0.02f <= M2() && M2() <= 0.11f && 0.03f <= M7() && M7() <= 0.095f && M4() <= 0.0042f && M3() <= 0.0071f)
+	if (0.39f <= M1() && M1() <= 0.7f && 0.02f <= M2() && M2() <= 0.2f && 0.03f <= M7() && M7() <= 0.095f && M4() <= 0.0042f && M3() <= 0.0071f)
 	{
 		return Label::five;
 	}

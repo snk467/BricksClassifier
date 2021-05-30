@@ -18,7 +18,7 @@ int main(int, char* [])
 	(void)_setmode(_fileno(stdout), _O_U16TEXT);
 	std::wcout << L"BlocksDetector, POBR project, Sławomir Nikiel" << std::endl << std::endl;
 
-	bool calibration = false;
+	bool calibration = true;
 
 	if (calibration)
 	{
@@ -87,11 +87,11 @@ int main(int, char* [])
 			for (auto& segment : segments)
 			{
 				segment.calculateGeometricMoments(false);
-				if (segment.whoAmI() != Segment::Label::unknown)
+				Segment::Label label = segment.whoAmI();
+				if (label != Segment::Label::unknown)
 				{
-					segment.drawBox(source, "5");
+					segment.drawBox(source, IOHelper::mapLabel(label));
 				}
-
 			}
 
 			IOHelper::outputImage(source, "out" + std::to_string(i), true);
