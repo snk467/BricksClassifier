@@ -12,30 +12,41 @@ class Segment
 	std::vector<cv::Point2i> mPoints;
 	bool mGeometricMomentsUpToDate = false;
 
-	float mXCenter;
-	float mYCenter;
-	float m_00;
-	float M_02;
-	float M_03;
-	float M_11;
-	float M_12;
-	float M_20;
-	float M_21;
-	float M_30;
+	double mXCenter;
+	double mYCenter;
+	double m_00;
+	double M_02;
+	double M_03;
+	double M_11;
+	double M_12;
+	double M_20;
+	double M_21;
+	double M_30;
 
-	float M1();
-	float M2();
-	float M3();
-	float M4();
-	float M5();
-	float M6();
-	float M7();
-	float M8();
-	float M9();
-	float M10();
+	double M1_value;
+	double M2_value;
+	double M3_value;
+	double M4_value;
+	double M5_value;
+	double M6_value;
+	double M7_value;
+	double M8_value;
+	double M9_value;
+	double M10_value;
 
-	float m(int p, int q);
-	float M(int p, int q);
+	double M1();
+	double M2();
+	double M3();
+	double M4();
+	double M5();
+	double M6();
+	double M7();
+	double M8();
+	double M9();
+	double M10();
+
+	double m(int p, int q);
+	double M(int p, int q);
 
 	bool isFive();
 	bool isEight();
@@ -45,7 +56,7 @@ class Segment
 	bool isFour();
 	bool isTen();
 
-	bool isInRange(float value, float low, float high);
+	bool isInRange(double value, double low, double high);
 public:
 	Segment();
 	enum class Label { zero, one, three, four, five, eight, ten, unknown };
@@ -53,7 +64,7 @@ public:
 	void addPoint(cv::Point2i p);
 	void calculateGeometricMoments(bool verbose = false);
 	void drawBox(cv::Mat& image, std::string label = "");
-	float area();
+	double area();
 	static Segment merge(Segment s1, Segment s2);
 
 };

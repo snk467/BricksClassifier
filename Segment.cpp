@@ -2,16 +2,27 @@
 
 Segment::Segment()
 {
-	mXCenter = std::numeric_limits<float>::max();
-	mYCenter = std::numeric_limits<float>::max();
-	m_00 = std::numeric_limits<float>::max();
-	M_02 = std::numeric_limits<float>::max();
-	M_03 = std::numeric_limits<float>::max();
-	M_11 = std::numeric_limits<float>::max();
-	M_12 = std::numeric_limits<float>::max();
-	M_20 = std::numeric_limits<float>::max();
-	M_21 = std::numeric_limits<float>::max();
-	M_30 = std::numeric_limits<float>::max();
+	mXCenter = std::numeric_limits<double>::max();
+	mYCenter = std::numeric_limits<double>::max();
+	m_00 = std::numeric_limits<double>::max();
+	M_02 = std::numeric_limits<double>::max();
+	M_03 = std::numeric_limits<double>::max();
+	M_11 = std::numeric_limits<double>::max();
+	M_12 = std::numeric_limits<double>::max();
+	M_20 = std::numeric_limits<double>::max();
+	M_21 = std::numeric_limits<double>::max();
+	M_30 = std::numeric_limits<double>::max();
+
+	M1_value  = std::numeric_limits<double>::max();
+	M2_value  = std::numeric_limits<double>::max();
+	M3_value  = std::numeric_limits<double>::max();
+	M4_value  = std::numeric_limits<double>::max();
+	M5_value  = std::numeric_limits<double>::max();
+	M6_value  = std::numeric_limits<double>::max();
+	M7_value  = std::numeric_limits<double>::max();
+	M8_value  = std::numeric_limits<double>::max();
+	M9_value  = std::numeric_limits<double>::max();
+	M10_value = std::numeric_limits<double>::max();
 }
 
 void Segment::addPoint(cv::Point2i p)
@@ -131,25 +142,25 @@ Segment Segment::merge(Segment s1, Segment s2)
 	return mergedSegment;
 }
 
-float Segment::m(int p, int q)
+double Segment::m(int p, int q)
 {
-	float m = 0.0f;
+	double m = 0.0;
 
 	for (auto& point : mPoints)
 	{
-		m += (float)(pow(point.x, p) * pow(point.y, q));
+		m += pow(point.x, p) * pow(point.y, q);
 	}
 
 	return m;
 }
 
-float Segment::M(int p, int q)
+double Segment::M(int p, int q)
 {
-	float M = 0.0f;
+	double M = 0.0;
 
 	for (auto& point : mPoints)
 	{
-		M += (float)(pow(point.x - mXCenter, p) * pow(point.y - mYCenter, q));
+		M += pow(point.x - mXCenter, p) * pow(point.y - mYCenter, q);
 	}
 
 	return M;
@@ -199,20 +210,29 @@ Segment::Label Segment::whoAmI()
 
 bool Segment::isZero()
 {
-	return isInRange(M1(), 0.33f, 0.44f) && isInRange(M2(), 0.025f , 0.1f) && isInRange(M3(), 0.f, 0.00031f) && isInRange(M6(), -0.0001f, 0.00003f);
+	return isInRange(M1(), 0.33f, 0.44f) && isInRange(M2(), 0.0034f , 0.1f) && isInRange(M3(), 0.00001f, 0.00031f) && isInRange(M6(), -0.0001f, 0.00003f) && isInRange(M7(), 0.022f, 0.033f);
 }
 bool Segment::isOne()
 {
 	return 
-		isInRange(M1(), 0.44f, 0.67f) &&
+		isInRange(M1(), 0.38f, 0.67f) &&
 		isInRange(M2(), 0.1f, 0.4f) &&
-		isInRange(M3(), 0.01f, 0.042f) &&
-		isInRange(M4(), 0.003f, 0.022f) &&
-		isInRange(M6(), 0.001f, 0.014f) &&
+		isInRange(M3(), 0.007f, 0.042f) &&
+		isInRange(M4(), 0.0029f, 0.022f) &&
+		isInRange(M6(), 0.0009f, 0.014f) &&
 		isInRange(M7(), 0.01f, 0.05f) &&
-		isInRange(M8(), -0.003f, -0.0009f) &&
+		isInRange(M8(), -0.003f, -0.0005f) &&
 		isInRange(M9(), 0.00028f, 0.0021f);
 }
+
+//isInRange(M1(), 0.44f, 0.67f) &&
+//isInRange(M2(), 0.1f, 0.4f) &&
+//isInRange(M3(), 0.01f, 0.042f) &&
+//isInRange(M4(), 0.003f, 0.022f) &&
+//isInRange(M6(), 0.001f, 0.014f) &&
+//isInRange(M7(), 0.01f, 0.05f) &&
+//isInRange(M8(), -0.003f, -0.0009f) &&
+//isInRange(M9(), 0.00028f, 0.0021f);
 
 bool Segment::isThree()
 {
@@ -236,112 +256,101 @@ bool Segment::isEight()
 
 bool Segment::isTen()
 {
-	return isInRange(M1(), 0.35f, 0.36f) && isInRange(M2(), 0.0032f, 0.0034f) && isInRange(M3(), 0.001f, 0.0012f);
+	return isInRange(M1(), 0.35f, 0.39f) && isInRange(M2(), 0.0032f, 0.011f) && isInRange(M3(), 0.001f, 0.0017f);
 }
 
-float Segment::M1()
+double Segment::M1()
 {
-	static float value;
-
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = (M_20 + M_02) / (float)pow(m_00, 2);
+		M1_value = (M_20 + M_02) / pow(m_00, 2);
 	}
-	return value;
+	return M1_value;
 }
 
-float Segment::M2()
+double Segment::M2()
 {
-	static float value;
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = ((float)pow(M_20 - M_02, 2) + 4.f * (float)pow(M_11, 2)) / (float)pow(m_00, 4);
+		M2_value = (pow(M_20 - M_02, 2) + 4.0 * pow(M_11, 2)) / pow(m_00, 4);
 	}
 	
-	return value;
+	return M2_value;
 }
 
-float Segment::M3()
+double Segment::M3()
 {
-	static float value;
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = ((float)pow(M_30 - 3.f * M_12, 2) + (float)pow(3.f * M_21 - M_03, 2)) / (float)pow(m_00, 5);
+		M3_value = (pow(M_30 - 3.0 * M_12, 2) + pow(3.0 * M_21 - M_03, 2)) / pow(m_00, 5);
 	}
-	return value;
+	return M3_value;
 }
 
-float Segment::M4()
+double Segment::M4()
 {
-	static float value;
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = ((float)pow(M_30 + M_12, 2) + (float)pow(M_21 + M_03, 2)) / (float)pow(m_00, 5);
+		M4_value = (pow(M_30 + M_12, 2) + pow(M_21 + M_03, 2)) / pow(m_00, 5);
 	}
-	return value;
+	return M4_value;
 }
 
-float Segment::M5()
+double Segment::M5()
 {
-	static float value;
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = ((M_30 - 3.f * M_12) * (M_30 + M_12) * ((float)pow(M_30 + M_12, 2) - 3.f * (float)pow(M_21 + M_03, 2)) + (3.f * M_21 - M_03) * (M_21 + M_03) * (3.f * (float)pow(M_30 + M_12, 2) - (float)pow(M_21 + M_03, 2))) / (float)pow(m_00, 10);
+		M5_value = ((M_30 - 3.0 * M_12) * (M_30 + M_12) * (pow(M_30 + M_12, 2) - 3.0 * pow(M_21 + M_03, 2)) + (3.0 * M_21 - M_03) * (M_21 + M_03) * (3.0 * pow(M_30 + M_12, 2) - pow(M_21 + M_03, 2))) / pow(m_00, 10);
 	}
-	return value;
+	return M5_value;
 }
 
-float Segment::M6()
+double Segment::M6()
 {
-	static float value;
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = ((M_20 - M_02) * ((float)pow(M_30 + M_12, 2) - (float)pow(M_21 + M_03, 2)) + 4.f * M_11 * (M_30 + M_12) * (M_21 + M_03)) / (float)pow(m_00, 7);
+		M6_value = ((M_20 - M_02) * (pow(M_30 + M_12, 2) - pow(M_21 + M_03, 2)) + 4.0 * M_11 * (M_30 + M_12) * (M_21 + M_03)) / pow(m_00, 7);
 	}
-	return value;
+	return M6_value;
 }
 
-float Segment::M7()
+double Segment::M7()
 {
-	static float value;
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = (M_20 * M_02 - (float)pow(M_11, 2)) / (float)pow(m_00, 4);
+		M7_value = (M_20 * M_02 - pow(M_11, 2)) / pow(m_00, 4);
 	}
-	return value;
+	return M7_value;
 }
 
-float Segment::M8()
+double Segment::M8()
 {
-	static float value;
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = (M_30 * M_12 + M_21 * M_03 - (float)pow(M_12, 2) - (float)pow(M_21, 2)) / (float)pow(m_00, 5);
+		M8_value = (M_30 * M_12 + M_21 * M_03 - pow(M_12, 2) - pow(M_21, 2)) / pow(m_00, 5);
 	}
-	return value;
+	return M8_value;
 }
 
-float Segment::M9()
+double Segment::M9()
 {
-	static float value;
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = (M_20 * (M_21 * M_03 - (float)pow(M_12, 2)) + M_02 * (M_03 * M_12 - (float)pow(M_21, 2)) - M_11 * (M_30 * M_03 - M_21 * M_12)) / (float)pow(m_00, 7);
+		M9_value = (M_20 * (M_21 * M_03 - pow(M_12, 2)) + M_02 * (M_03 * M_12 - pow(M_21, 2)) - M_11 * (M_30 * M_03 - M_21 * M_12)) / pow(m_00, 7);
 	}
-	return value;
+	return M9_value;
 }
 
-float Segment::M10()
+double Segment::M10()
 {
-	static float value;
 	if (!mGeometricMomentsUpToDate)
 	{
-		value = ((float)pow(M_30 * M_03 - M_12 * M_21, 2) - 4.f * (M_30 * M_12 - (float)pow(M_21, 2)) * (M_03 * M_21 - M_12)) / (float)pow(m_00, 10);
+		M10_value = (pow(M_30 * M_03 - M_12 * M_21, 2) - 4.0 * (M_30 * M_12 - pow(M_21, 2)) * (M_03 * M_21 - M_12)) / pow(m_00, 10);
 	}
-	return value;
+	return M10_value;
 }
 
-bool Segment::isInRange(float value, float low, float high)
+bool Segment::isInRange(double value, double low, double high)
 {
 	return low <= value && value <= high;
 }

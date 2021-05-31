@@ -129,10 +129,13 @@ int main(int, char* [])
 				while (zerosIt != zeros.end())
 				{
 					Segment potentialTen = Segment::merge(*onesIt, *zerosIt);
+					std::wcout << "Merged one and zero of size: " << (*onesIt).area() << " " << (int)(*onesIt).whoAmI() << " " << (*zerosIt).area() << " " << (int)(*zerosIt).whoAmI()  << " " << potentialTen.area() << std::endl;
 					label = potentialTen.whoAmI();
 					if (label == Segment::Label::ten)
 					{
+						std::wcout << "Ten detected, size: " << potentialTen.area() << std::endl;
 						potentialTen.drawBox(source, IOHelper::mapLabel(label));
+						std::wcout << "Removed zero of size: " << (*zerosIt).area() << std::endl;
 						zerosIt = zeros.erase(zerosIt);
 						break;
 					}
@@ -142,7 +145,9 @@ int main(int, char* [])
 
 				if (label == Segment::Label::ten)
 				{
+					std::wcout << "Removed one of size: " << (*onesIt).area() << std::endl;
 					onesIt = ones.erase(onesIt);
+					label = Segment::Label::unknown;
 				}
 				else
 					onesIt++;
@@ -151,15 +156,14 @@ int main(int, char* [])
 			for (auto& s : ones)
 			{
 				Segment::Label label = s.whoAmI();
-				std::string a = IOHelper::mapLabel(label);
-				std::wstring aaa(a.begin(), a.end());
-				std::wcout << aaa << std::endl;
+				std::wcout << "Retrived one of size: " << s.area() << " and label: " << (int)label << std::endl;
 				s.drawBox(source, IOHelper::mapLabel(label));
 			}
 
 			for (auto& s : zeros)
 			{
 				Segment::Label label = s.whoAmI();
+				std::wcout << "Retrived zero of size: " << s.area() << " and label: " << (int)label << std::endl;
 				s.drawBox(source, IOHelper::mapLabel(label));
 			}
 
