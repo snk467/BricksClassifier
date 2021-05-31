@@ -18,7 +18,20 @@ int main(int, char* [])
 	(void)_setmode(_fileno(stdout), _O_U16TEXT);
 	std::wcout << L"BlocksDetector, POBR project, Sławomir Nikiel" << std::endl << std::endl;
 
-	bool calibration = true;
+	std::wcout << L"Display calibration data? [y/N]" << std::endl;
+	std::string answer;
+
+	do
+	{
+		std::getline(std::cin, answer);
+	}while (answer != "" && answer != "y" && answer != "N");
+
+	bool calibration = false;
+	if (answer == "y")
+	{
+		calibration = true;
+	}
+
 
 	if (calibration)
 	{
@@ -83,6 +96,8 @@ int main(int, char* [])
 			/*Rysowanie bounding boxów*/
 
 			std::vector<Segment> segments = segmentMap.getSegments();
+			std::vector<Segment> ones;
+			std::vector<Segment> zeros;
 
 			for (auto& segment : segments)
 			{
@@ -90,9 +105,65 @@ int main(int, char* [])
 				Segment::Label label = segment.whoAmI();
 				if (label != Segment::Label::unknown)
 				{
-					segment.drawBox(source, IOHelper::mapLabel(label));
+					if (label != Segment::Label::one && label != Segment::Label::zero)
+					{
+						segment.drawBox(source, IOHelper::mapLabel(label));
+					}
+					else if(label == Segment::Label::one)
+					{
+						ones.push_back(segment);
+					}
+					else
+					{
+						zeros.push_back(segment);
+					}
 				}
 			}
+
+			std::vector<Segment>::iterator onesIt = ones.begin();
+			std::vector<Segment>::iterator zerosIt = zeros.begin();
+
+			Segment::Label label = Segment::Label::unknown;
+			while (onesIt != ones.end()) 
+			{
+				while (zerosIt != zeros.end())
+				{
+					Segment potentialTen = Segment::merge(*onesIt, *zerosIt);
+					label = potentialTen.whoAmI();
+					if (label == Segment::Label::ten)
+					{
+						potentialTen.drawBox(source, IOHelper::mapLabel(label));
+						zerosIt = zeros.erase(zerosIt);
+						break;
+					}
+					else
+						zerosIt++;
+				}
+
+				if (label == Segment::Label::ten)
+				{
+					onesIt = ones.erase(onesIt);
+				}
+				else
+					onesIt++;
+			}
+
+			for (auto& s : ones)
+			{
+				Segment::Label label = s.whoAmI();
+				std::string a = IOHelper::mapLabel(label);
+				std::wstring aaa(a.begin(), a.end());
+				std::wcout << aaa << std::endl;
+				s.drawBox(source, IOHelper::mapLabel(label));
+			}
+
+			for (auto& s : zeros)
+			{
+				Segment::Label label = s.whoAmI();
+				s.drawBox(source, IOHelper::mapLabel(label));
+			}
+
+
 
 			IOHelper::outputImage(source, "out" + std::to_string(i), true);
 		}

@@ -19,7 +19,7 @@ std::vector<cv::Mat> IOHelper::loadImages(string path)
     {
         images.push_back(cv::imread(filesNames[i]));
     }
-    std::wcout << images.size() << " images loaded" << std::endl;
+    std::wcout << "> " << images.size() << " images loaded" << std::endl;
 
     return images;
 }

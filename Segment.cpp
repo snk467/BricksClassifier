@@ -117,6 +117,20 @@ float Segment::area()
 	return mPoints.size();
 }
 
+Segment Segment::merge(Segment s1, Segment s2)
+{
+	std::vector<cv::Point2i> mergedPoints;
+	mergedPoints.insert(mergedPoints.end(), s1.mPoints.begin(), s1.mPoints.end());
+	mergedPoints.insert(mergedPoints.end(), s2.mPoints.begin(), s2.mPoints.end());
+
+	Segment mergedSegment = Segment();
+	mergedSegment.mPoints = mergedPoints;
+
+	mergedSegment.calculateGeometricMoments();
+
+	return mergedSegment;
+}
+
 float Segment::m(int p, int q)
 {
 	float m = 0.0f;
@@ -144,13 +158,85 @@ float Segment::M(int p, int q)
 
 Segment::Label Segment::whoAmI()
 {
+	// 0
+	if (isZero())
+	{
+		return Label::zero;
+	}
+	// 1
+	if (isOne())
+	{
+		return Label::one;
+	}
+	// 3
+	if (isThree())
+	{
+		return Label::three;
+	}
+	// 4
+	if (isFour())
+	{
+		return Label::four;
+	}
 	// 5
-	if (0.39f <= M1() && M1() <= 0.7f && 0.02f <= M2() && M2() <= 0.2f && 0.03f <= M7() && M7() <= 0.095f && M4() <= 0.0042f && M3() <= 0.0071f)
+	if (isFive())
 	{
 		return Label::five;
 	}
+	// 8
+	if (isEight())
+	{
+		return Label::eight;
+	}
+	// 10
+	if (isTen())
+	{
+		return Label::ten;
+	}
 
 	return Label::unknown;
+}
+
+bool Segment::isZero()
+{
+	return isInRange(M1(), 0.33f, 0.44f) && isInRange(M2(), 0.025f , 0.1f) && isInRange(M3(), 0.f, 0.00031f) && isInRange(M6(), -0.0001f, 0.00003f);
+}
+bool Segment::isOne()
+{
+	return 
+		isInRange(M1(), 0.44f, 0.67f) &&
+		isInRange(M2(), 0.1f, 0.4f) &&
+		isInRange(M3(), 0.01f, 0.042f) &&
+		isInRange(M4(), 0.003f, 0.022f) &&
+		isInRange(M6(), 0.001f, 0.014f) &&
+		isInRange(M7(), 0.01f, 0.05f) &&
+		isInRange(M8(), -0.003f, -0.0009f) &&
+		isInRange(M9(), 0.00028f, 0.0021f);
+}
+
+bool Segment::isThree()
+{
+	return isInRange(M1(), 0.39f, 0.7f) && isInRange(M2(), 0.04f, 0.07f) && isInRange(M7(), 0.05f, 0.07f) && isInRange(M4(), 0.0042f, 0.05f);
+}
+
+bool Segment::isFour()
+{
+	return isInRange(M1(), 0.4f, 0.5f) && isInRange(M3(), 0.02f, 0.025f) && isInRange(M7(), 0.035f, 0.041f);
+}
+
+bool Segment::isFive()
+{
+	return 0.39f <= M1() && M1() <= 0.7f && 0.02f <= M2() && M2() <= 0.2f && 0.03f <= M7() && M7() <= 0.095f && M4() <= 0.0042f && M3() <= 0.0071f;
+}
+
+bool Segment::isEight()
+{
+	return isInRange(M1(), 0.24f, 0.32f) && isInRange(M2(), 0.005f, 0.007f) && isInRange(M7(), 0.01f, 0.023f);
+}
+
+bool Segment::isTen()
+{
+	return isInRange(M1(), 0.35f, 0.36f) && isInRange(M2(), 0.0032f, 0.0034f) && isInRange(M3(), 0.001f, 0.0012f);
 }
 
 float Segment::M1()
@@ -253,4 +339,9 @@ float Segment::M10()
 		value = ((float)pow(M_30 * M_03 - M_12 * M_21, 2) - 4.f * (M_30 * M_12 - (float)pow(M_21, 2)) * (M_03 * M_21 - M_12)) / (float)pow(m_00, 10);
 	}
 	return value;
+}
+
+bool Segment::isInRange(float value, float low, float high)
+{
+	return low <= value && value <= high;
 }
