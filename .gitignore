@@ -272,3 +272,8 @@ __pycache__/
 /*.png
 # tmp directory
 tmp/
+
+# Do not ignore out images
+!/out/out*.png
+# Ignore rest images
+/out/*.png
