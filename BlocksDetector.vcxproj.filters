@@ -14,53 +14,59 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Source Files\Helpers">
-      <UniqueIdentifier>{dc4ae890-228d-4ffe-aa87-5a42571b9236}</UniqueIdentifier>
+      <UniqueIdentifier>{b830eae7-8097-4c8b-8dc4-f0a1c54bf0a7}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Processing">
-      <UniqueIdentifier>{b286d668-91c2-4893-95d0-72b310e749b3}</UniqueIdentifier>
+      <UniqueIdentifier>{c562a2ea-389a-47d2-8d52-e46cb1154ba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Helpers">
+      <UniqueIdentifier>{32611654-8cc3-4134-b9a8-4c5ac8ee7732}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Processing">
+      <UniqueIdentifier>{6d15efeb-e73f-465e-b9c0-1440f0377c0f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BlocksDetector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Args.cpp">
+    <ClCompile Include="helpers\IOHelper.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="IOHelper.cpp">
+    <ClCompile Include="helpers\Args.cpp">
       <Filter>Source Files\Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="Converter.cpp">
+    <ClCompile Include="processing\Converter.cpp">
       <Filter>Source Files\Processing</Filter>
     </ClCompile>
-    <ClCompile Include="ImageProcessor.cpp">
+    <ClCompile Include="processing\ImageProcessor.cpp">
       <Filter>Source Files\Processing</Filter>
     </ClCompile>
-    <ClCompile Include="SegmentMap.cpp">
+    <ClCompile Include="processing\Segment.cpp">
       <Filter>Source Files\Processing</Filter>
     </ClCompile>
-    <ClCompile Include="Segment.cpp">
+    <ClCompile Include="processing\SegmentMap.cpp">
       <Filter>Source Files\Processing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Args.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="helpers\Args.h">
+      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="IOHelper.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="helpers\IOHelper.h">
+      <Filter>Header Files\Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="ImageProcessor.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="processing\Converter.h">
+      <Filter>Header Files\Processing</Filter>
     </ClInclude>
-    <ClInclude Include="Converter.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="processing\ImageProcessor.h">
+      <Filter>Header Files\Processing</Filter>
     </ClInclude>
-    <ClInclude Include="SegmentMap.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="processing\Segment.h">
+      <Filter>Header Files\Processing</Filter>
     </ClInclude>
-    <ClInclude Include="Segment.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="processing\SegmentMap.h">
+      <Filter>Header Files\Processing</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

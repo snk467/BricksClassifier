@@ -147,21 +147,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Args.cpp" />
     <ClCompile Include="BlocksDetector.cpp" />
-    <ClCompile Include="Converter.cpp" />
-    <ClCompile Include="ImageProcessor.cpp" />
-    <ClCompile Include="IOHelper.cpp" />
-    <ClCompile Include="Segment.cpp" />
-    <ClCompile Include="SegmentMap.cpp" />
+    <ClCompile Include="helpers\Args.cpp" />
+    <ClCompile Include="helpers\IOHelper.cpp" />
+    <ClCompile Include="processing\Converter.cpp" />
+    <ClCompile Include="processing\ImageProcessor.cpp" />
+    <ClCompile Include="processing\Segment.cpp" />
+    <ClCompile Include="processing\SegmentMap.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Args.h" />
-    <ClInclude Include="Converter.h" />
-    <ClInclude Include="IOHelper.h" />
-    <ClInclude Include="ImageProcessor.h" />
-    <ClInclude Include="Segment.h" />
-    <ClInclude Include="SegmentMap.h" />
+    <ClInclude Include="helpers\Args.h" />
+    <ClInclude Include="helpers\IOHelper.h" />
+    <ClInclude Include="processing\Converter.h" />
+    <ClInclude Include="processing\ImageProcessor.h" />
+    <ClInclude Include="processing\Segment.h" />
+    <ClInclude Include="processing\SegmentMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -3,7 +3,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "SegmentMap.h"
 #include "Converter.h"
-#include "IOHelper.h"
+#include "../helpers/IOHelper.h"
 #include <stack>
 
 class ImageProcessor

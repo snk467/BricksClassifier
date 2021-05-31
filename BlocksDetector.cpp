@@ -5,11 +5,10 @@
 
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-#include "Args.h"
-#include "IOHelper.h"
-#include "Converter.h"
-#include "Filter.h"
-#include "ImageProcessor.h"
+#include "helpers/Args.h"
+#include "helpers/IOHelper.h"
+#include "processing/Converter.h"
+#include "processing/ImageProcessor.h"
 #include <stack>
 #include <filesystem>
 
