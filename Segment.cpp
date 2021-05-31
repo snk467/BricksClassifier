@@ -123,9 +123,9 @@ void Segment::drawBox(cv::Mat& image, std::string label)
 	}
 }
 
-float Segment::area()
+int Segment::area()
 {
-	return mPoints.size();
+	return (int)mPoints.size();
 }
 
 Segment Segment::merge(Segment s1, Segment s2)
@@ -210,53 +210,64 @@ Segment::Label Segment::whoAmI()
 
 bool Segment::isZero()
 {
-	return isInRange(M1(), 0.33f, 0.44f) && isInRange(M2(), 0.0034f , 0.1f) && isInRange(M3(), 0.00001f, 0.00031f) && isInRange(M6(), -0.0001f, 0.00003f) && isInRange(M7(), 0.022f, 0.033f);
+	return 
+		isInRange(M1(), 0.33, 0.44) &&
+		isInRange(M2(), 0.0034 , 0.3) &&
+		isInRange(M3(), 0.00001, 0.001) &&
+		isInRange(M6(), -0.0001, 0.00004) &&
+		isInRange(M7(), 0.022, 0.033);
 }
+
 bool Segment::isOne()
 {
 	return 
-		isInRange(M1(), 0.38f, 0.67f) &&
-		isInRange(M2(), 0.1f, 0.4f) &&
-		isInRange(M3(), 0.007f, 0.042f) &&
-		isInRange(M4(), 0.0029f, 0.022f) &&
-		isInRange(M6(), 0.0009f, 0.014f) &&
-		isInRange(M7(), 0.01f, 0.05f) &&
-		isInRange(M8(), -0.003f, -0.0005f) &&
-		isInRange(M9(), 0.00028f, 0.0021f);
+		isInRange(M1(), 0.38, 0.67) &&
+		isInRange(M2(), 0.1, 0.4) &&
+		isInRange(M3(), 0.007, 0.042) &&
+		isInRange(M4(), 0.0029, 0.022) &&
+		isInRange(M6(), 0.0009, 0.014) &&
+		isInRange(M7(), 0.01, 0.05) &&
+		isInRange(M8(), -0.003, -0.0005) &&
+		isInRange(M9(), 0.00028, 0.0021)
+		&& (isInRange(M5(), -0.0001, 0.00044) || isInRange(M10(), -0.0001, 0.0));
 }
-
-//isInRange(M1(), 0.44f, 0.67f) &&
-//isInRange(M2(), 0.1f, 0.4f) &&
-//isInRange(M3(), 0.01f, 0.042f) &&
-//isInRange(M4(), 0.003f, 0.022f) &&
-//isInRange(M6(), 0.001f, 0.014f) &&
-//isInRange(M7(), 0.01f, 0.05f) &&
-//isInRange(M8(), -0.003f, -0.0009f) &&
-//isInRange(M9(), 0.00028f, 0.0021f);
 
 bool Segment::isThree()
 {
-	return isInRange(M1(), 0.39f, 0.7f) && isInRange(M2(), 0.04f, 0.07f) && isInRange(M7(), 0.05f, 0.07f) && isInRange(M4(), 0.0042f, 0.05f);
+	return 
+		isInRange(M1(), 0.39, 0.7) &&
+		isInRange(M2(), 0.04, 0.07) &&
+		isInRange(M7(), 0.05, 0.07) &&
+		isInRange(M4(), 0.0042, 0.05);
 }
 
 bool Segment::isFour()
 {
-	return isInRange(M1(), 0.4f, 0.5f) && isInRange(M3(), 0.02f, 0.025f) && isInRange(M7(), 0.035f, 0.041f);
+	return 
+		isInRange(M1(), 0.4, 0.5) &&
+		isInRange(M3(), 0.02, 0.025) &&
+		isInRange(M7(), 0.035, 0.041);
 }
 
 bool Segment::isFive()
 {
-	return 0.39f <= M1() && M1() <= 0.7f && 0.02f <= M2() && M2() <= 0.2f && 0.03f <= M7() && M7() <= 0.095f && M4() <= 0.0042f && M3() <= 0.0071f;
+	return 0.39 <= M1() && M1() <= 0.7 && 0.02 <= M2() && M2() <= 0.2 && 0.03 <= M7() && M7() <= 0.095 && M4() <= 0.0042 && M3() <= 0.0071;
 }
 
 bool Segment::isEight()
 {
-	return isInRange(M1(), 0.24f, 0.32f) && isInRange(M2(), 0.005f, 0.007f) && isInRange(M7(), 0.01f, 0.023f);
+	return 
+		isInRange(M1(), 0.24, 0.32) &&
+		isInRange(M2(), 0.005, 0.007) &&
+		isInRange(M7(), 0.01, 0.023);
 }
 
 bool Segment::isTen()
 {
-	return isInRange(M1(), 0.35f, 0.39f) && isInRange(M2(), 0.0032f, 0.011f) && isInRange(M3(), 0.001f, 0.0017f);
+	return 
+		isInRange(M1(), 0.35, 0.41) &&
+		isInRange(M2(), 0.0016, 0.011) &&
+		isInRange(M3(), 0.001, 0.0024);
 }
 
 double Segment::M1()

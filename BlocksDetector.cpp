@@ -13,29 +13,45 @@
 #include <stack>
 #include <filesystem>
 
-int main(int, char* [])
+void getAnswer(std::string& answer)
 {
-	(void)_setmode(_fileno(stdout), _O_U16TEXT);
-	std::wcout << L"BlocksDetector, POBR project, Sławomir Nikiel" << std::endl << std::endl;
-
-	std::wcout << L"Display calibration data? [y/N]" << std::endl;
-	std::string answer;
-
 	do
 	{
 		std::getline(std::cin, answer);
-	}while (answer != "" && answer != "y" && answer != "N");
+	} while (answer != "" && answer != "y" && answer != "N" && answer != "Y" && answer != "n");
+}
 
-	bool calibration = false;
-	if (answer == "y")
+bool answerNegative(std::string& answer)
+{
+	return answer == "N" || answer == "n";
+}
+
+bool answerPositive(std::string& answer)
+{
+	return answer == "Y" || answer == "y";
+}
+
+int main(int, char* [])
+{
+	(void)_setmode(_fileno(stdout), _O_U16TEXT);
+
+
+	std::wcout << L"BlocksDetector, POBR project, Sławomir Nikiel" << std::endl << std::endl;
+
+	std::wcout << L"Calibration mode? [y/N]" << std::endl;
+	std::string answer;
+
+	getAnswer(answer);
+
+	if (answerPositive(answer))
 	{
-		calibration = true;
-	}
+		Args::calibration = true;
+	}	
 
-
-	if (calibration)
+	if (Args::calibration)
 	{
 		std::vector<cv::Mat> masks = IOHelper::loadImages(Args::modelsDir);
+		std::wcout << std::endl;
 		std::vector<cv::String> filesNames;
 		cv::glob(Args::modelsDir + "\\*", filesNames, false);		
 
@@ -57,122 +73,41 @@ int main(int, char* [])
 			}
 			std::wcout << std::filesystem::path(filesNames[i]).filename() << std::endl;
 			segment.calculateGeometricMoments(true);
+			std::wcout << std::endl;
 		}
 	}
 	else
 	{
+		std::filesystem::remove_all(Args::outPath);
+
+		std::wcout << L"Verbose? [y/N]" << std::endl;
+
+		getAnswer(answer);
+
+		if (answerPositive(answer))
+		{
+			Args::verbose = true;
+		}
+
+		std::wcout << L"Show output? [Y/n]" << std::endl;
+
+		getAnswer(answer);
+
+		if (answerNegative(answer))
+		{
+			Args::showOutput = false;
+		}
+
 		std::vector<cv::Mat> images = IOHelper::loadImages(Args::dataDir);
 
 		for (int i = 0; i < images.size(); i++)
 		{
 			cv::Mat3b source = images[i];
-
-
-			/*Filtracja rankingowa*/
-
-			cv::Mat filteredImage;
-			ImageProcessor::rankFilter(source, filteredImage, 3, 5);
-			IOHelper::outputImage(filteredImage, "rank" + std::to_string(i));
-
-			/*Progowanie*/
-
-			cv::Mat1b mask;
-			ImageProcessor::threshold(filteredImage, mask);
-			IOHelper::outputImage(mask, "threshold" + std::to_string(i));
-
-			/*Dylacja i erozja*/
-
-			ImageProcessor::dilate(mask, mask);
-			ImageProcessor::dilate(mask, mask);
-			ImageProcessor::erode(mask, mask);
-			IOHelper::outputImage(mask, "mask" + std::to_string(i));
-
-			/*Generowanie mapy segmentów*/
-
-			SegmentMap segmentMap;
-			ImageProcessor::generateSegmentMap(filteredImage, segmentMap, mask);
-			IOHelper::outputImage(segmentMap.getMap(), "segmentMap" + std::to_string(i));
-
-			/*Rysowanie bounding boxów*/
-
-			std::vector<Segment> segments = segmentMap.getSegments();
-			std::vector<Segment> ones;
-			std::vector<Segment> zeros;
-
-			for (auto& segment : segments)
-			{
-				segment.calculateGeometricMoments(false);
-				Segment::Label label = segment.whoAmI();
-				if (label != Segment::Label::unknown)
-				{
-					if (label != Segment::Label::one && label != Segment::Label::zero)
-					{
-						segment.drawBox(source, IOHelper::mapLabel(label));
-					}
-					else if(label == Segment::Label::one)
-					{
-						ones.push_back(segment);
-					}
-					else
-					{
-						zeros.push_back(segment);
-					}
-				}
-			}
-
-			std::vector<Segment>::iterator onesIt = ones.begin();
-			std::vector<Segment>::iterator zerosIt = zeros.begin();
-
-			Segment::Label label = Segment::Label::unknown;
-			while (onesIt != ones.end()) 
-			{
-				while (zerosIt != zeros.end())
-				{
-					Segment potentialTen = Segment::merge(*onesIt, *zerosIt);
-					std::wcout << "Merged one and zero of size: " << (*onesIt).area() << " " << (int)(*onesIt).whoAmI() << " " << (*zerosIt).area() << " " << (int)(*zerosIt).whoAmI()  << " " << potentialTen.area() << std::endl;
-					label = potentialTen.whoAmI();
-					if (label == Segment::Label::ten)
-					{
-						std::wcout << "Ten detected, size: " << potentialTen.area() << std::endl;
-						potentialTen.drawBox(source, IOHelper::mapLabel(label));
-						std::wcout << "Removed zero of size: " << (*zerosIt).area() << std::endl;
-						zerosIt = zeros.erase(zerosIt);
-						break;
-					}
-					else
-						zerosIt++;
-				}
-
-				if (label == Segment::Label::ten)
-				{
-					std::wcout << "Removed one of size: " << (*onesIt).area() << std::endl;
-					onesIt = ones.erase(onesIt);
-					label = Segment::Label::unknown;
-				}
-				else
-					onesIt++;
-			}
-
-			for (auto& s : ones)
-			{
-				Segment::Label label = s.whoAmI();
-				std::wcout << "Retrived one of size: " << s.area() << " and label: " << (int)label << std::endl;
-				s.drawBox(source, IOHelper::mapLabel(label));
-			}
-
-			for (auto& s : zeros)
-			{
-				Segment::Label label = s.whoAmI();
-				std::wcout << "Retrived zero of size: " << s.area() << " and label: " << (int)label << std::endl;
-				s.drawBox(source, IOHelper::mapLabel(label));
-			}
-
-
-
-			IOHelper::outputImage(source, "out" + std::to_string(i), true);
+			std::vector<Segment> recognised;
+			recognised = ImageProcessor::process(source);			
 		}
 	}
 
-	cv::waitKey(-1);
+	cv::waitKey(0);
 	return 0;
 }

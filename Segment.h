@@ -64,7 +64,7 @@ public:
 	void addPoint(cv::Point2i p);
 	void calculateGeometricMoments(bool verbose = false);
 	void drawBox(cv::Mat& image, std::string label = "");
-	double area();
+	int area();
 	static Segment merge(Segment s1, Segment s2);
 
 };

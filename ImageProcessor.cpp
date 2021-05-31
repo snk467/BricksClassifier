@@ -1,6 +1,7 @@
 ﻿
 #include "ImageProcessor.h"
 
+int ImageProcessor::imageId = 0;
 
 void ImageProcessor::colorReduce(cv::Mat source, cv::Mat& destination, int div)
 {
@@ -29,12 +30,12 @@ void ImageProcessor::threshold(cv::Mat source, cv::Mat1b& destination)
 
     cv::Mat_<cv::Vec3b> image;
     Converter::BGRToHLS(source, image);
-    int lowH = 3; //0 -- HSV //3 -- HLS
-    int highH = 16; //15 -- HSV //16 -- HLS
-    int lowS = 65; //106 -- HSV //65 -- HLS
-    int highS = 190; //230 -- HSV //170 -- HLS
-    int lowL = 0; //0 -- HLS
-    int highL = 145; //145 -- HLS
+    int lowH = 3;
+    int highH = 16;
+    int lowS = 65;
+    int highS = 190;
+    int lowL = 0;
+    int highL = 145;
 
     for (int x = 0; x < image.cols; x++)
     {
@@ -223,6 +224,135 @@ void ImageProcessor::dilate(cv::Mat1b source, cv::Mat1b& destination)
 void ImageProcessor::erode(cv::Mat1b source, cv::Mat1b& destination)
 {
     ImageProcessor::morphologyFilter(source, destination, false);
+}
+
+std::vector<Segment> ImageProcessor::process(cv::Mat3b image)
+{
+    cv::Mat3b source = image.clone();
+
+    IOHelper::outputImageInfo(std::wcout, imageId);
+
+    /*Filtracja rankingowa*/
+
+    IOHelper::outputLabel(std::wcout, L"Filtering...");
+    cv::Mat filteredImage;
+    ImageProcessor::rankFilter(source, filteredImage, 3, 5);
+    IOHelper::outputDoneInformation(std::wcout);
+    IOHelper::outputImage(filteredImage, "filter" + std::to_string(imageId));
+
+    /*Progowanie*/
+
+    IOHelper::outputLabel(std::wcout, L"Thresholding...");
+    cv::Mat1b mask;
+    ImageProcessor::threshold(filteredImage, mask);
+    IOHelper::outputDoneInformation(std::wcout);
+    IOHelper::outputImage(mask, "threshold" + std::to_string(imageId));
+
+    /*Dylacja i erozja*/
+
+    IOHelper::outputLabel(std::wcout, L"Dilate and erode...");
+    ImageProcessor::dilate(mask, mask);
+    ImageProcessor::dilate(mask, mask);
+    ImageProcessor::erode(mask, mask);
+    IOHelper::outputDoneInformation(std::wcout);
+    IOHelper::outputImage(mask, "mask" + std::to_string(imageId));
+
+    /*Generowanie mapy segmentów*/
+
+    IOHelper::outputLabel(std::wcout, L"Generating segment map...");
+    SegmentMap segmentMap;
+    ImageProcessor::generateSegmentMap(filteredImage, segmentMap, mask);
+    IOHelper::outputDoneInformation(std::wcout);
+    IOHelper::outputImage(segmentMap.getMap(), "segmentMap" + std::to_string(imageId));
+
+
+    /*Rozpoznawanie*/
+
+    IOHelper::outputLabel(std::wcout, L"Classifying segments...");
+    std::vector<Segment> recognised;
+    std::vector<Segment> segments = segmentMap.getSegments();
+    std::vector<Segment> ones;
+    std::vector<Segment> zeros;
+
+    for (auto& segment : segments)
+    {
+        segment.calculateGeometricMoments(false);
+        Segment::Label label = segment.whoAmI();
+        if (label != Segment::Label::unknown)
+        {
+            if (label != Segment::Label::one && label != Segment::Label::zero)
+            {
+                //segment.drawBox(source, IOHelper::mapLabel(label));
+                recognised.push_back(segment);
+            }
+            else if (label == Segment::Label::one)
+            {
+                ones.push_back(segment);
+            }
+            else
+            {
+                zeros.push_back(segment);
+            }
+        }
+    }
+
+    std::vector<Segment>::iterator onesIt = ones.begin();
+    Segment::Label label = Segment::Label::unknown;
+    while (onesIt != ones.end())
+    {
+
+        std::vector<Segment>::iterator zerosIt = zeros.begin();
+        while (zerosIt != zeros.end())
+        {
+            Segment potentialTen = Segment::merge(*onesIt, *zerosIt);
+            label = potentialTen.whoAmI();
+            if (label == Segment::Label::ten)
+            {
+                //potentialTen.drawBox(source, IOHelper::mapLabel(label));
+                recognised.push_back(potentialTen);
+                zerosIt = zeros.erase(zerosIt);
+                break;
+            }
+            else
+                zerosIt++;
+        }
+
+        if (label == Segment::Label::ten)
+        {
+            onesIt = ones.erase(onesIt);
+            label = Segment::Label::unknown;
+        }
+        else
+            onesIt++;
+    }
+
+    recognised.insert(recognised.end(), ones.begin(), ones.end());
+    recognised.insert(recognised.end(), zeros.begin(), zeros.end());
+    IOHelper::outputDoneInformation(std::wcout);
+    
+    drawBoundingBoxes(source, recognised);
+
+    imageId++;
+
+    return recognised;
+}
+
+void ImageProcessor::drawBoundingBoxes(cv::Mat3b source, std::vector<Segment> segments)
+{
+    /*Rysowanie bounding boxów*/
+    IOHelper::outputLabel(std::wcout, L"Drawing bounding boxes...");
+    std::wstring listOfNumbers = L"";
+    for (auto& segment : segments)
+    {
+        std::string label = IOHelper::mapLabel(segment.whoAmI());
+        segment.drawBox(source, label);
+        std::wstring wLabel(label.begin(), label.end());
+        listOfNumbers += wLabel + L" ";
+    }
+
+    IOHelper::outputResults(std::wcout, listOfNumbers);
+    IOHelper::outputDoneInformation(std::wcout);
+    IOHelper::outputImage(source, "out" + std::to_string(imageId), Args::showOutput, true);
 }
 
 bool ImageProcessor::isInRange(int value, int low, int high)

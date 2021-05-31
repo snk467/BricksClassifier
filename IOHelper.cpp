@@ -1,6 +1,7 @@
 #include "IOHelper.h"
 
 
+
 using std::string;
 
 std::vector<cv::Mat> IOHelper::loadImages(string path)
@@ -26,9 +27,11 @@ std::vector<cv::Mat> IOHelper::loadImages(string path)
 
 void IOHelper::outputImage(cv::Mat image, std::string title, bool show, bool save)
 {
-    if (save)
+    if (save || Args::verbose)
     {
-        cv::imwrite(title + ".png", image);
+        std::string outPath = Args::outPath;
+        std::filesystem::create_directory(std::filesystem::path(outPath));
+        cv::imwrite(outPath + title + ".png", image);
     }
     if (show)
     {
@@ -77,4 +80,38 @@ std::string IOHelper::mapLabel(Segment::Label label)
     }
 
     return labelString;
+}
+
+
+
+void IOHelper::outputLabel(std::wostream& stream, std::wstring label)
+{
+    if (Args::verbose)
+    {
+        stream << label << std::endl;
+    }
+}
+
+void IOHelper::outputInformation(std::wostream& stream, std::wstring information)
+{
+    if (Args::verbose)
+    {
+        stream << L"> " << information << std::endl;
+    }
+}
+
+void IOHelper::outputResults(std::wostream& stream, std::wstring results)
+{
+    stream << L"> Detected numbers: " + results << std::endl;
+}
+
+void IOHelper::outputImageInfo(std::wostream& stream, int imageId)
+{
+    stream << L"Processing image..." << std::endl;
+    stream << L"> Image ID: " + std::to_wstring(imageId) << std::endl;
+}
+
+void IOHelper::outputDoneInformation(std::wostream& stream)
+{
+    outputInformation(std::wcout, L"DONE");
 }

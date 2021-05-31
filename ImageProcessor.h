@@ -3,6 +3,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "SegmentMap.h"
 #include "Converter.h"
+#include "IOHelper.h"
 #include <stack>
 
 class ImageProcessor
@@ -14,7 +15,10 @@ public:
 	static void rankFilter(cv::Mat source, cv::Mat& destination, int N, int index);
 	static void dilate(cv::Mat1b source, cv::Mat1b& destination);
 	static void erode(cv::Mat1b source, cv::Mat1b& destination);
+	static std::vector<Segment> process(cv::Mat3b image);
 private: 
+	static int imageId;
+	static void drawBoundingBoxes(cv::Mat3b source, std::vector<Segment> segments);
 	static void morphologyFilter(cv::Mat1b source, cv::Mat1b& destination, bool dilate, cv::Mat1b kernel);
 	static bool isInRange(int value, int low, int high);
 	static void floodFill(cv::Mat3b source, SegmentMap& destination, cv::Mat1b& mask,

@@ -2,6 +2,14 @@
 
 using std::string;
 
-const string Args::dataDir = "C:\\Users\\snk\\Documents\\Visual Studio 2019\\Solutions\\BlocksDetector\\Data";
+const string Args::dataDir = ".\\data";
 
-const string Args::modelsDir = "C:\\Users\\snk\\Documents\\Visual Studio 2019\\Solutions\\BlocksDetector\\ModelMasks";
+const string Args::modelsDir = ".\\modelMasks";
+
+const string Args::outPath = ".\\out\\";
+
+bool Args::calibration = false;
+
+bool Args::verbose = false;
+
+bool Args::showOutput = true;
