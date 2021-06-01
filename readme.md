@@ -16,7 +16,7 @@ Poprawa jakości wejściowego obrazu odbywa się z użyciem filtracji rankingowe
 
 ### Segmentacja i rozpoznawanie
 
-Na podstawie wcześniej wspomnianej maski oraz kolorowego obrazu otrzymanego po filtracji rankingowej wykonywana jest segmentacja obrazu. Odbywa się ona algorytmem FloodFill z uwzględnieniem kanału V przestrzeni barw HSV. Segmenty wydzielane są na podstawie spójności obszarów binarnej maski oraz progowania kanału V pikseli. Taka metoda pozwala wyodrębnić poszczególne cyfry nawet w przypadku, gdy nie zostały one całkowicie odseparowane za pomocą maski. Poniższy obraz przedstawia wygenerowaną w opisany sposób mapę segmentów.
+Na podstawie wcześniej wspomnianej maski oraz kolorowego obrazu otrzymanego po filtracji rankingowej wykonywana jest segmentacja obrazu. Przed samą segmentacją przeprowadzana jest redukcja ilości kolorów przefiltrowanego obrazu, co pozytywnie wpływa na wyniki segmentacji. Segmentacja odbywa się algorytmem FloodFill z uwzględnieniem kanału V przestrzeni barw HSV. Segmenty wydzielane są na podstawie spójności obszarów binarnej maski oraz progowania kanału V pikseli. Taka metoda pozwala wyodrębnić poszczególne cyfry nawet w przypadku, gdy nie zostały one całkowicie odseparowane za pomocą maski. Poniższy obraz przedstawia wygenerowaną w opisany sposób mapę segmentów.
 
 <img src="readme.assets/segmentMap0.png" alt="mapa segmentów" style="zoom:50%;" />
 

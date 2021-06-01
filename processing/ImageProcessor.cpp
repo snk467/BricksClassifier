@@ -51,7 +51,7 @@ void ImageProcessor::threshold(cv::Mat source, cv::Mat1b& destination)
     destination = outImage;
 }
 
-void ImageProcessor::floodFill(cv::Mat3b source, SegmentMap& destination, cv::Mat1b& mask, cv::Vec3b color, cv::Point2i seed, int lowThreshold, int highThreshold, bool eightConnected)
+void ImageProcessor::floodFill(cv::Mat3b source, SegmentMap& destination, cv::Mat1b& mask, cv::Vec3b color, cv::Point2i seed, int lowThreshold, int highThreshold)
 {
     uchar done = 0;
     std::stack<cv::Point2i> stack = std::stack<cv::Point2i>();
@@ -108,12 +108,6 @@ void ImageProcessor::floodFill(cv::Mat3b source, SegmentMap& destination, cv::Ma
             stack.push(p);
             mask(p) = done;
         }
-
-
-        if (eightConnected)
-        {
-            //TODO
-        }
     }
 }
 
@@ -122,7 +116,6 @@ void ImageProcessor::generateSegmentMap(cv::Mat3b source, SegmentMap& destinatio
     cv::Mat1b auxMask = mask.clone();
     destination = SegmentMap(source.cols, source.rows);
     ImageProcessor::colorReduce(source, source, 110);
-    //cv::cvtColor(source, source, cv::COLOR_BGR2HSV);
     Converter::BGRToHSV(source, source);
     for (int x = 0; x < source.cols; x++)
     {

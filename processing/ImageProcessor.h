@@ -23,5 +23,5 @@ private:
 	static bool isInRange(int value, int low, int high);
 	static void floodFill(cv::Mat3b source, SegmentMap& destination, cv::Mat1b& mask,
 						  cv::Vec3b color, cv::Point2i seed, int lowThreshold = 70,
-						  int highThreshold = 50, bool eightConnected = false);
+						  int highThreshold = 50);
 };
