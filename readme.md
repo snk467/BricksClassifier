@@ -1,10 +1,12 @@
-# POBR - projekt
+# BricksClassifier
 
 <img src="https://user-images.githubusercontent.com/55458365/147407359-25cb0fe0-5361-42bc-83f7-6454411516c0.png" alt="drawing" width="30"/> **PL**
 
 Autor: Sławomir Nikiel
 
 Tematem projektu jest implementacja programu rozpoznającego numery na drewnianych klockach. Rozpoznawanie zrealizowane jest za pomocą klasycznych metod przetwarzania obrazów oraz klasyfikacji obiektów. Sam program zaimplementowany jest w języku C++. Wszystkie kluczowe algorytmy  wykorzystywane w rozwiązaniu zawarte są w kodzie źródłowym, wspierają je struktury danych zawarte w bibliotece OpenCV.
+
+Projekt zrealizowany w ramach przedmiotu "Przetwarzanie obrazów cyfrowych" na wydziale EiTI Politechniki Warszawskiej.
 
 ## Rozwiązanie
 
@@ -31,6 +33,8 @@ Podczas generowania mapy tworzone są obiekty poszczególnych segmentów, które
 Author: Sławomir Nikiel
 
 The subject of the project is to implement a programme recognising numbers on wooden blocks. Recognition is realised using classical methods of image processing and object classification. The program itself is implemented in C++ language. All key algorithms used in the solution are included in the source code, they are supported by data structures included in the OpenCV library.
+
+Project carried out as part of the "Digital Image Processing" course at the EiTI Faculty of Warsaw University of Technology.
 
 ## Solution
 
